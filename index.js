@@ -1,11 +1,15 @@
 	
-
-	let displayChico = document.getElementById('numeroActual');
-	let displayGrande = document.getElementById('resultado');
-
+	//Var declaration.
+	let smallDisplay = document.getElementById('numeroActual');
+	let bigDisplay = document.getElementById('resultado');
 	let buttons = Array.from(document.getElementsByClassName('boton'));
 
-	
+	//Boolean, check if its the first number inputted in smallDisplay.
+	let firstInput = true;
+
+	//Bolean, check if theres any data left to delete.
+	let everythingDeleted = true;
+
 	buttons.map ( boton => {
 
 		boton.addEventListener('click', (e) => {
@@ -14,30 +18,52 @@
 
 				case 'AC':
 
-					displayChico.innerText = '';
-					displayGrande.innerText = '';
+					smallDisplay.innerText = '0';
+					bigDisplay.innerText = '0';
+
+					//Change firstInput to true since, after hitting 'AC' the next button pressed will be the first input of smallDisplay.
+					firstInput = true;
 					break;
 
 				case 'C':
 
-					displayChico.innerText = '' ;
+					smallDisplay.innerText = '0' ;
+
+					//Change firstInput to true since, after hitting 'C' the next button pressed will be the first input of smallDisplay.
+					firstInput = true;
 					break;
 
 				case '←':
 
-					displayChico.innerText = displayChico.innerText.slice(0, -1);
+					if ( smallDisplay.innerText.length == 1 ){
+
+						smallDisplay.innerText = "0";
+						firstInput = true;
+						everythingDeleted = true;
+					}
+
+					if(everythingDeleted != true) {
+							
+						smallDisplay.innerText = smallDisplay.innerText.slice(0, -1);
+						console.log(smallDisplay.innerText.length);
+					}
+
 					break;
 				
 			
 				case '=':
 
 					try {
-							displayGrande.innerText = eval(displayChico.innerText);
-							displayChico.innerText = '';
+							bigDisplay.innerText = eval(smallDisplay.innerText);
+							smallDisplay.innerText = '0';
+
+							//Change firstInput to true since, after hitting 'equals' the next button pressed will be the first input of smallDisplay.
+							firstInput = true;
+
 					} catch {
 
-						displayGrande.innerText = 'Error! ..virgo' ;
-						displayChico.innerText = '';
+						bigDisplay.innerText = 'Error!' ;
+						smallDisplay.innerText = '';
 					}
 
 										
@@ -45,7 +71,24 @@
 
 				default:
 
-					displayChico.innerText += e.target.innerText ;
+					//If its the first input, erase all things in smallDisplay to only have the number.
+					if ( firstInput == true ) {
+
+						smallDisplay.innerText = '';
+
+					}
+
+					//If theres a number in bigDisplay, delete it and put it in smallDisplay, to use the result into the next equation. For ex "3+100 = 103" --> press "+2" and smallDisplay "103+2" without having to write 103
+					if ( bigDisplay.innerText != "0" && firstInput == true && ("+,-,*,/".includes(e.target.innerText))) {
+
+						smallDisplay.innerText = bigDisplay.innerText + "";
+						bigDisplay.innerText = "";
+
+					}
+
+					smallDisplay.innerText += e.target.innerText ;
+					firstInput = false;
+					everythingDeleted = false;
 
 			}
 
